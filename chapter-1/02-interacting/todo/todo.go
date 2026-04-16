@@ -1,7 +1,9 @@
 package todo
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
 	"time"
 )
 
@@ -43,4 +45,13 @@ func (l *List) Delete(i int) error {
 	ls[i-1].CompletedAt = time.Now()
 
 	return nil
+}
+
+func (l List) Save(fileName string) error {
+	marshal, err := json.Marshal(l)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(fileName, marshal, 0644)
 }
