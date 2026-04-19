@@ -55,3 +55,18 @@ func (l List) Save(fileName string) error {
 
 	return os.WriteFile(fileName, marshal, 0644)
 }
+
+func (l *List) Get(fileName string) error {
+	file, err := os.ReadFile(fileName)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return errors.New("file doesn't exist")
+		}
+		return err
+	}
+
+	if len(file) == 0 {
+		return nil
+	}
+	return json.Unmarshal(file, l)
+}
