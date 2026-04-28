@@ -2,6 +2,7 @@ package main
 
 import (
 	todo "bootstrap"
+	"fmt"
 	"os"
 )
 
@@ -17,6 +18,7 @@ func main() {
 		//Whe developing a command-line tool,
 		//it's a good practice to use the standard error(STDERR)
 		//output insetead of the standard output(STDOUT)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
