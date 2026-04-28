@@ -2,6 +2,9 @@ package todo_test
 
 import (
 	todo "bootstrap"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"testing"
 )
 
@@ -59,6 +62,31 @@ func TestDelete(t *testing.T) {
 
 	if l[1].Task != tasks[2] {
 		t.Errorf("Expected %q, got %q instead", tasks[2], l[1].Task)
+	}
+
+}
+
+func TestSaveGet(t *testing.T) {
+	// Correto: List é exportado (público)
+	var list1 todo.List = todo.List{}
+	var list2 todo.List = todo.List{}
+
+	// Erro: você não tem acesso ao tipo 'item' para definir []item
+	//var list []todo.item = todo.List{}
+
+	var taskName string = "New Task"
+	list1.Add(taskName)
+
+	if list1[0].Task != taskName {
+		t.Errorf("Expected %q, got %q instead", taskName, list1[0].Task)
+	}
+
+	//deprecated
+	//ioutil.TempFile("","")
+
+	temp, err := os.CreateTemp("", "")
+	if err != nil {
+		t.Fatal("Error creating temp file: %s", err)
 	}
 
 }
