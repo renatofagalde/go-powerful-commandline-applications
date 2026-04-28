@@ -89,4 +89,6 @@ func TestSaveGet(t *testing.T) {
 		t.Fatal("Error creating temp file: %s", err)
 	}
 
+	defer os.Remove(temp.Name())
+
 }
