@@ -4,12 +4,13 @@ import (
 	todo "bootstrap"
 	"fmt"
 	"os"
+	"strings"
 )
 
 const TODO_FILE_NAME string = ".todo.json"
 
 func main() {
-	var list todo.List = todo.List{}
+	var list *todo.List = &todo.List{}
 
 	if err := list.Get(TODO_FILE_NAME); err != nil {
 		//errorString := fmt.Sprintf("Error %v to open the %s file", err, TODO_FILE_NAME)
@@ -21,4 +22,24 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+
+	switch {
+
+	case len(os.Args) == 1:
+		for _, item := range *list {
+			fmt.Println(item)
+		}
+
+	default:
+		item := strings.Join(os.Args[1:], " ")
+		fmt.Println(item)
+
+		list.Add(item)
+
+		if err := list.Save(TODO_FILE_NAME); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	}
+
 }
