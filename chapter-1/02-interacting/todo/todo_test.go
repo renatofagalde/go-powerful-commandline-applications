@@ -2,8 +2,6 @@ package todo_test
 
 import (
 	todo "bootstrap"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -91,4 +89,10 @@ func TestSaveGet(t *testing.T) {
 
 	defer os.Remove(temp.Name())
 
+	if err := list1.Save(temp.Name()); err != nil {
+		t.Fatal("Error creating temp file: %s", err)
+	}
+	if err := list2.Save(temp.Name()); err != nil {
+		t.Fatal("Error creating temp file: %s", err)
+	}
 }
