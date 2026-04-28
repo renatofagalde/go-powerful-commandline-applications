@@ -84,15 +84,18 @@ func TestSaveGet(t *testing.T) {
 
 	temp, err := os.CreateTemp("", "")
 	if err != nil {
-		t.Fatal("Error creating temp file: %s", err)
+		t.Errorf("Error creating temp file: %s", err)
 	}
 
 	defer os.Remove(temp.Name())
 
 	if err := list1.Save(temp.Name()); err != nil {
-		t.Fatal("Error creating temp file: %s", err)
+		t.Errorf("Error creating temp file: %s", err)
 	}
-	if err := list2.Save(temp.Name()); err != nil {
-		t.Fatal("Error creating temp file: %s", err)
+	if err := list2.Get(temp.Name()); err != nil {
+		t.Errorf("Error creating temp file: %s", err)
+	}
+	if list1[0].Task != list2[0].Task {
+		t.Errorf("Expected %q, got %q instead", taskName, list1[0].Task)
 	}
 }
