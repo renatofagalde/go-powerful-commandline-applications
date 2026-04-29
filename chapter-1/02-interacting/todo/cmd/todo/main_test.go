@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 )
 
@@ -56,4 +57,16 @@ func TestTodoCLI(t *testing.T) {
 	}
 
 	cmdPath := filepath.Join(dir, binName)
+
+	if cmdPath == "" {
+		t.Fatal("Cannot find the tool")
+	}
+
+	t.Run("Add New Task", func(t *testing.T) {
+		exec.Command(cmdPath, strings.Split(task, " ")...).Run()
+
+		if err := cmd.Run(); err != nil {
+			t.Fatal(err)
+		}
+	})
 }
