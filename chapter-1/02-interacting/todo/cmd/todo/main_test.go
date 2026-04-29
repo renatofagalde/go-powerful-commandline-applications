@@ -37,7 +37,12 @@ func TestMain(m *testing.M) {
 			_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
 		}
 	}(binName)
-	defer os.Remove(fileName + ".test")
+	defer func(name string) {
+		err := os.Remove(name)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
+		}
+	}(fileName + ".test")
 
 	os.Exit(run)
 }
