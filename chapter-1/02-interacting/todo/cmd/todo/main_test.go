@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"testing"
 )
@@ -45,4 +46,14 @@ func TestMain(m *testing.M) {
 	}(fileName + ".test")
 
 	os.Exit(run)
+}
+
+func TestTodoCLI(t *testing.T) {
+	var task string = "Test task number 1"
+	dir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	cmdPath := filepath.Join(dir, binName)
 }
