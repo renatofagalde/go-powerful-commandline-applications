@@ -6,13 +6,12 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 )
 
 var (
 	binName  string = "todo"
-	fileName string = "todo_test.go"
+	fileName string = ".todo.json"
 )
 
 func TestMain(m *testing.M) {
@@ -22,7 +21,11 @@ func TestMain(m *testing.M) {
 		binName += ".exe"
 	}
 
-	build := exec.Command("go", "build", "-o", binName, fileName)
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		_ = os.WriteFile(fileName, []byte("[]"), 0644)
+	}
+
+	build := exec.Command("go", "build", "-o", binName)
 
 	if err := build.Run(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Cannot build the tool %s: %s\n", binName, err)
@@ -33,20 +36,22 @@ func TestMain(m *testing.M) {
 	run := m.Run()
 
 	fmt.Println("Cleaning up...")
-	defer func(name string) {
-		err := os.Remove(name)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
-		}
-	}(binName)
-	defer func(name string) {
-		err := os.Remove(name)
-		if err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
-		}
-	}(fileName + ".test")
+	//defer func(name string) {
+	//	err := os.Remove(name)
+	//	if err != nil {
+	//		_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
+	//	}
+	//}(binName)
+	//defer func(name string) {
+	//	err := os.Remove(name)
+	//	if err != nil {
+	//		_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
+	//	}
+	//}(fileName)
+	_ = os.Remove(binName)
+	_ = os.Remove(fileName)
 
-	os.Exit(run)
+	os.Exit(run) // os.Exit doesn't call defer functions
 }
 
 func TestTodoCLI(t *testing.T) {
@@ -63,9 +68,8 @@ func TestTodoCLI(t *testing.T) {
 	}
 
 	t.Run("Add New Task", func(t *testing.T) {
-		exec.Command(cmdPath, strings.Split(task, " ")...).Run()
-
-		if err := cmd.Run(); err != nil {
+		//if err := exec.Command(cmdPath, strings.Split(task, " ")...).Run(); err != nil {
+		if err := exec.Command(cmdPath, task).Run(); err != nil {
 			t.Fatal(err)
 		}
 	})
