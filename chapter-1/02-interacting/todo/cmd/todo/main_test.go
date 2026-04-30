@@ -73,4 +73,9 @@ func TestTodoCLI(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+
+	t.Run("ListTasks", func(t *testing.T) {
+		command := exec.Command(cmdPath)
+
+	})
 }
