@@ -47,12 +47,11 @@ func (l *List) Delete(i int) error {
 	return nil
 }
 
-func (l List) Save(fileName string) error {
+func (l *List) Save(fileName string) error {
 	marshal, err := json.Marshal(l)
 	if err != nil {
 		return err
 	}
-
 	return os.WriteFile(fileName, marshal, 0644)
 }
 
