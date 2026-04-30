@@ -80,6 +80,7 @@ func TestTodoCLI(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		expected := task + "\n"
 
 	})
 }
