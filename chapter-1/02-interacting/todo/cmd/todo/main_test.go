@@ -16,7 +16,8 @@ var (
 
 func TestMain(m *testing.M) {
 	fmt.Println("Building tool...")
-
+	wd, _ := os.Getwd()
+	fmt.Println("PWD:", wd)
 	if runtime.GOOS == "windows" {
 		binName += ".exe"
 	}
@@ -68,6 +69,9 @@ func TestTodoCLI(t *testing.T) {
 	}
 
 	t.Run("Add New Task", func(t *testing.T) {
+
+		cmd := exec.Command(cmdPath, task)
+		cmd.Dir = dir // 👈 ESSENCIAL
 		//if err := exec.Command(cmdPath, strings.Split(task, " ")...).Run(); err != nil {
 		if err := exec.Command(cmdPath, task).Run(); err != nil {
 			t.Fatal(err)
@@ -75,6 +79,9 @@ func TestTodoCLI(t *testing.T) {
 	})
 
 	t.Run("ListTasks", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, task)
+		cmd.Dir = dir // 👈 ESSENCIAL
+
 		command := exec.Command(cmdPath)
 		out, err := command.CombinedOutput()
 		if err != nil {
