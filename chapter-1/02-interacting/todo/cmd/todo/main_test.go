@@ -15,40 +15,27 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	fmt.Println("Building tool...")
-	wd, _ := os.Getwd()
-	fmt.Println("PWD:", wd)
 	if runtime.GOOS == "windows" {
 		binName += ".exe"
 	}
 
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		_ = os.WriteFile(fileName, []byte("[]"), 0644)
+		err := os.WriteFile(fileName, []byte("[]"), 0644)
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Cannot create the file %s", fileName)
+			os.Exit(1)
+		}
 	}
 
-	build := exec.Command("go", "build", "-o", binName)
+	build := exec.Command("go", "build", "-a", "-o", binName)
 
 	if err := build.Run(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Cannot build the tool %s: %s\n", binName, err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Tool built successfully\nRunning tests...")
 	run := m.Run()
 
-	fmt.Println("Cleaning up...")
-	//defer func(name string) {
-	//	err := os.Remove(name)
-	//	if err != nil {
-	//		_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
-	//	}
-	//}(binName)
-	//defer func(name string) {
-	//	err := os.Remove(name)
-	//	if err != nil {
-	//		_, _ = fmt.Fprintf(os.Stderr, "Cannot remove the tool %s: %s\n", name, err)
-	//	}
-	//}(fileName)
 	_ = os.Remove(binName)
 	_ = os.Remove(fileName)
 
@@ -64,32 +51,30 @@ func TestTodoCLI(t *testing.T) {
 
 	cmdPath := filepath.Join(dir, binName)
 
-	if cmdPath == "" {
-		t.Fatal("Cannot find the tool")
-	}
-
 	t.Run("Add New Task", func(t *testing.T) {
 
-		cmd := exec.Command(cmdPath, task)
-		cmd.Dir = dir // 👈 ESSENCIAL
-		//if err := exec.Command(cmdPath, strings.Split(task, " ")...).Run(); err != nil {
 		if err := exec.Command(cmdPath, task).Run(); err != nil {
 			t.Fatal(err)
 		}
+		command := exec.Command("cat", fileName)
+		out, _ := command.CombinedOutput()
+		fmt.Println(fmt.Sprintf("File content at save: %s", string(out)))
+
 	})
 
 	t.Run("ListTasks", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, task)
-		cmd.Dir = dir // 👈 ESSENCIAL
 
 		command := exec.Command(cmdPath)
-		out, err := command.CombinedOutput()
+		command.Dir = dir
+
+		out, err := command.Output()
 		if err != nil {
 			t.Fatal(err)
 		}
-		expected := task + "\n"
+
+		expected := "Test task number 1\n"
 		if expected != string(out) {
-			t.Errorf("Exptected %q, got %q instead\n", expected, string(out))
+			t.Errorf("Expected %q, got %q instead\n", expected, string(out))
 		}
 	})
 }
