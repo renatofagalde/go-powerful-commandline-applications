@@ -11,9 +11,6 @@ const TODO_FILE_NAME string = ".todo.json"
 
 func main() {
 	var list *todo.List = &todo.List{}
-	wd, _ := os.Getwd()
-	fmt.Println("PWD:", wd)
-	fmt.Println("Loaded list:", *list)
 
 	if err := list.Get(TODO_FILE_NAME); err != nil {
 		//errorString := fmt.Sprintf("Error %v to open the %s file", err, TODO_FILE_NAME)
