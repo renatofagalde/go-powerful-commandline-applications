@@ -22,6 +22,10 @@ func main() {
 	//	fmt.Fprintln(os.Stderr, err)
 	//	os.Exit(1)
 	//}
+	if err := list.Get(TODO_FILE_NAME); err != nil && !os.IsNotExist(err) {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	switch {
 
