@@ -14,6 +14,7 @@ func main() {
 
 	task := flag.String("task", "", "Task to be included in the ToDo list")
 	list := flag.Bool("list", false, "List all tasks in the ToDo list")
+	complete := flag.Int("complete", 0, "Complete task by index")
 
 	var list *todo.List = &todo.List{}
 	if err := list.Get(TODO_FILE_NAME); err != nil && !os.IsNotExist(err) {
