@@ -2,6 +2,7 @@ package main
 
 import (
 	todo "bootstrap"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -10,6 +11,9 @@ import (
 const TODO_FILE_NAME string = ".todo.json"
 
 func main() {
+
+	task := flag.String("task", "", "Task to be included in the ToDo list")
+
 	var list *todo.List = &todo.List{}
 	if err := list.Get(TODO_FILE_NAME); err != nil && !os.IsNotExist(err) {
 		_, _ = fmt.Fprintln(os.Stderr, err)
